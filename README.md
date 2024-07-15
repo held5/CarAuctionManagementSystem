@@ -3,7 +3,7 @@
 ## Project Description
 
 ### Overview
-The Car Auction Management System is a simple API built in .NET to manage auctions for different types of vehicles: Sedans, SUVs, and Trucks. The system allows users to add vehicles to an auction inventory, search for vehicles, start and close auctions, and place bids on vehicles during active auctions. The focus of the project is on object-oriented design principles, clean and efficient code, and robust error handling.
+The Car Auction Management System is a simple API built in .NET to manage auctions for different types of vehicles: Sedans, SUVs, and Trucks. The system allows users to add vehicles to an auction inventory, search for vehicles, start and close auctions, and place bids on vehicles during active auctions. The focus of the project is on object-oriented design principles, clean and efficient code, and error handling.
 
 ### Vehicle Types and Attributes
 The system handles three types of vehicles, each with its own set of attributes:
