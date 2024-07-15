@@ -207,7 +207,7 @@ namespace CarAuction.UnitTests.Application
     public async Task PlaceBidAsync_WhenBidIsValid_ShouldPlaceBid()
     {
       // Arrange
-      var bid = new BidDto(Guid.NewGuid(), 1500);
+      var bid = new PlaceBidRequestDto(Guid.NewGuid(), 1500);
       var auction = new Auction { Id = bid.AuctionId, IsActive = true, CurrentHighestBid = 1000 };
 
       _auctionRepositoryMock.Get(bid.AuctionId).Returns(auction);
@@ -234,7 +234,7 @@ namespace CarAuction.UnitTests.Application
     {
       // Arrange
       var auctionId = Guid.NewGuid();
-      var bid = new BidDto(auctionId, 1500);
+      var bid = new PlaceBidRequestDto(auctionId, 1500);
       _auctionRepositoryMock.Get(auctionId).Returns(default(Auction));
 
       // Act + Assert
@@ -258,7 +258,7 @@ namespace CarAuction.UnitTests.Application
     public async Task PlaceBidAsync_InactiveAuction_ShouldThrowInvalidOperationException()
     {
       // Arrange
-      var bid = new BidDto(Guid.NewGuid(), 1500);
+      var bid = new PlaceBidRequestDto(Guid.NewGuid(), 1500);
       var auction = new Auction { Id = bid.AuctionId, IsActive = false };
 
       _auctionRepositoryMock.Get(bid.AuctionId).Returns(auction);
@@ -283,7 +283,7 @@ namespace CarAuction.UnitTests.Application
     public async Task PlaceBidAsync_WhenBidAmountNotHigher_ShouldThrowInvalidOperationException()
     {
       // Arrange
-      var bid = new BidDto(Guid.NewGuid(), 1000);
+      var bid = new PlaceBidRequestDto(Guid.NewGuid(), 1000);
       var auction = new Auction { Id = bid.AuctionId, IsActive = true, CurrentHighestBid = 1500 };
 
       _auctionRepositoryMock.Get(bid.AuctionId).Returns(auction);

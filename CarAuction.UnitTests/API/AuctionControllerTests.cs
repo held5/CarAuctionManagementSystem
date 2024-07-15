@@ -11,7 +11,7 @@ namespace CarAuction.UnitTests.API
   public class AuctionControllerTests
   {
     private ICarAuctionService _carAuctionServiceMock;
-    private AuctionController _sut;
+    private AuctionsController _sut;
 
     /// <summary>
     ///   Setup test environment for each test run.
@@ -20,7 +20,7 @@ namespace CarAuction.UnitTests.API
     public void Setup()
     {
       _carAuctionServiceMock = Substitute.For<ICarAuctionService>();
-      _sut = new AuctionController(_carAuctionServiceMock);
+      _sut = new AuctionsController(_carAuctionServiceMock);
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ namespace CarAuction.UnitTests.API
     public async Task PlaceBid_ShouldReturnOk()
     {
       // Arrange
-      var bid = new BidDto(Guid.NewGuid(), 1000);
+      var bid = new PlaceBidRequestDto(Guid.NewGuid(), 1000);
 
       // Act
       var result = await _sut.PlaceBid(bid);
@@ -161,7 +161,7 @@ namespace CarAuction.UnitTests.API
     public void PlaceBid_WhenAnExceptionOccurs_ShouldThrowAnInvalidOperationException()
     {
       // Arrange
-      var bid = new BidDto(Guid.NewGuid(), 1000);
+      var bid = new PlaceBidRequestDto(Guid.NewGuid(), 1000);
       _carAuctionServiceMock.PlaceBidAsync(bid).Throws(new InvalidOperationException("Mock exception"));
 
       // Act

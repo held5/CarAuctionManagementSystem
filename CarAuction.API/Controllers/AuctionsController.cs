@@ -7,24 +7,24 @@ namespace CarAuction.API.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
-  public class AuctionController : ControllerBase
+  public class AuctionsController : ControllerBase
   {
     private readonly ICarAuctionService _carAuctionService;
 
-    public AuctionController(ICarAuctionService carAuctionService)
+    public AuctionsController(ICarAuctionService carAuctionService)
     {
       _carAuctionService = carAuctionService;
     }
 
-    [HttpPost("[action]/{vehicleId}")]
-    public async Task<ActionResult> Create([FromRoute] Guid vehicleId)
+    [HttpPost]
+    public async Task<ActionResult> Create([FromBody] Guid vehicleId)
     {
       var result = await _carAuctionService.AddAuctionAsync(vehicleId);
 
       return Ok(result);
     }
 
-    [HttpPut("[action]/{auctionId}")]
+    [HttpPut("{auctionId}/close")]
     public async Task<ActionResult> Close([FromRoute] Guid auctionId)
     {
       await _carAuctionService.CloseAuctionAsync(auctionId);
@@ -32,10 +32,10 @@ namespace CarAuction.API.Controllers
       return Ok();
     }
 
-    [HttpPut("[action]")]
-    public async Task<ActionResult> PlaceBid([FromBody] BidDto bid)
+    [HttpPut("bid")]
+    public async Task<ActionResult> PlaceBid([FromBody] PlaceBidRequestDto bidRequest)
     {
-      await _carAuctionService.PlaceBidAsync(bid);
+      await _carAuctionService.PlaceBidAsync(bidRequest);
 
       return Ok();
     }

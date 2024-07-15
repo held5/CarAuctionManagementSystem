@@ -24,8 +24,8 @@ namespace CarAuction.Application.Services
     /// <summary>
     ///   Places a bid on an active auction.
     /// </summary>
-    /// <param name="bid">The data transfer object containing bid information.</param>
+    /// <param name="bidRequest">The data transfer object containing bid information.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task PlaceBidAsync(BidDto bid);
+    Task PlaceBidAsync(PlaceBidRequestDto bidRequest);
   }
 }

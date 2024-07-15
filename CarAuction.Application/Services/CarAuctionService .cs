@@ -68,26 +68,26 @@ namespace CarAuction.Application.Services
     }
 
     /// <inheritdoc />
-    public async Task PlaceBidAsync(BidDto bid)
+    public async Task PlaceBidAsync(PlaceBidRequestDto bidRequest)
     {
-      var auction = await _auctionRepository.Get(bid.AuctionId);
+      var auction = await _auctionRepository.Get(bidRequest.AuctionId);
 
       if (auction == null)
       {
-        throw new InvalidOperationException($"Auction with Id: {bid.AuctionId} not found.");
+        throw new InvalidOperationException($"Auction with Id: {bidRequest.AuctionId} not found.");
       }
 
       if (!auction.IsActive)
       {
-        throw new InvalidOperationException($"Auction with Id: {bid.AuctionId} is already closed.");
+        throw new InvalidOperationException($"Auction with Id: {bidRequest.AuctionId} is already closed.");
       }
 
-      if (auction.CurrentHighestBid >= bid.BidAmount)
+      if (auction.CurrentHighestBid >= bidRequest.BidAmount)
       {
         throw new InvalidOperationException("Bid amount must be higher than the current highest bid.");
       }
 
-      auction.CurrentHighestBid = bid.BidAmount;
+      auction.CurrentHighestBid = bidRequest.BidAmount;
       await _auctionRepository.Update(auction);
       await _uow.SaveChangesAsync();
     }
