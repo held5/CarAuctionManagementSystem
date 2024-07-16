@@ -30,7 +30,7 @@ namespace CarAuction.Infrastructure.Repositories
       return Task.FromResult(query.AsNoTracking());
     }
 
-    public async Task<T> Get(object id) => await _dbSet.FindAsync(id);
+    public async Task<T?> Get(object id) => await _dbSet.FindAsync(id);
 
     public async Task Add(T entity) => await _dbSet.AddAsync(entity);
 

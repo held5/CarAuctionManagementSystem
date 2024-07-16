@@ -7,11 +7,11 @@ namespace CarAuction.API.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
-  public class VehiclesController : ControllerBase
+  public class VehicleController : ControllerBase
   {
     private readonly IVehicleService _vehicleService;
 
-    public VehiclesController(IVehicleService vehicleService)
+    public VehicleController(IVehicleService vehicleService)
     {
       _vehicleService = vehicleService;
     }

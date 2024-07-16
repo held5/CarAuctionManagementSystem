@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container
 builder.Services.AddControllers(options =>
 {
-  options.Filters.Add(typeof(ValidateModelFilter));
+  options.Filters.Add(typeof(ValidateModelFilterAttribute));
 })
 .AddJsonOptions(options =>
 {

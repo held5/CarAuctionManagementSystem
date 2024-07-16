@@ -11,7 +11,7 @@ namespace CarAuction.UnitTests.API
   public class AuctionControllerTests
   {
     private ICarAuctionService _carAuctionServiceMock;
-    private AuctionsController _sut;
+    private AuctionController _sut;
 
     /// <summary>
     ///   Setup test environment for each test run.
@@ -20,7 +20,7 @@ namespace CarAuction.UnitTests.API
     public void Setup()
     {
       _carAuctionServiceMock = Substitute.For<ICarAuctionService>();
-      _sut = new AuctionsController(_carAuctionServiceMock);
+      _sut = new AuctionController(_carAuctionServiceMock);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ namespace CarAuction.UnitTests.API
       Assert.That(okResult.StatusCode, Is.EqualTo(200));
       Assert.That(okResult.Value, Is.EqualTo(expectedResult));
 
-      _carAuctionServiceMock.Received(1).AddAuctionAsync(vehicleId);
+      await _carAuctionServiceMock.Received(1).AddAuctionAsync(vehicleId);
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ namespace CarAuction.UnitTests.API
       Assert.That(result, Is.TypeOf<OkResult>());
       var okResult = result as OkResult;
       Assert.That(okResult.StatusCode, Is.EqualTo(200));
-      _carAuctionServiceMock.Received(1).CloseAuctionAsync(auctionId);
+      await _carAuctionServiceMock.Received(1).CloseAuctionAsync(auctionId);
     }
 
     /// <summary>
@@ -146,7 +146,7 @@ namespace CarAuction.UnitTests.API
       var okResult = result as OkResult;
 
       Assert.That(okResult.StatusCode, Is.EqualTo(200));
-      _carAuctionServiceMock.Received(1).PlaceBidAsync(bid);
+      await _carAuctionServiceMock.Received(1).PlaceBidAsync(bid);
     }
 
     /// <summary>

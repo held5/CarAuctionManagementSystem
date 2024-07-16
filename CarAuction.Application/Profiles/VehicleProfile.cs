@@ -6,9 +6,9 @@ using CarAuction.Domain.Enums;
 
 namespace CarAuction.Application.Profiles
 {
-  internal class AutoMapperProfile : Profile
+  internal class VehicleProfile : Profile
   {
-    public AutoMapperProfile()
+    public VehicleProfile()
     {
       CreateMap<AddVehicleRequestDto, Vehicle>()
         .ForMember(dest => dest.VehicleType, opt => opt.MapFrom(src => Enum.Parse<VehicleType>(src.VehicleType, true)));

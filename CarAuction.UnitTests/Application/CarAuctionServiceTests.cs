@@ -288,7 +288,7 @@ namespace CarAuction.UnitTests.Application
 
       _auctionRepositoryMock.Get(bid.AuctionId).Returns(auction);
 
-      // Act & Assert
+      // Act + Assert
       var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.PlaceBidAsync(bid));
       Assert.That(ex.Message, Is.EqualTo("Bid amount must be higher than the current highest bid."));
 

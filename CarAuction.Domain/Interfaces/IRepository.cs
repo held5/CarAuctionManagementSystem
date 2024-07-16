@@ -20,8 +20,8 @@ namespace CarAuction.Domain.Interfaces
     ///   Retrieves an entity by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity.</param>
-    /// <returns>The result is the entity.</returns>
-    Task<T> Get(object id);
+    /// <returns>The entity found or null.</returns>
+    Task<T?> Get(object id);
 
     /// <summary>
     ///   Adds a new entity to the repository.
