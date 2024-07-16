@@ -3,6 +3,7 @@
 using AutoMapper;
 
 using CarAuction.Application.Dtos;
+using CarAuction.Application.Exceptions;
 using CarAuction.Domain.Entities;
 using CarAuction.Domain.Enums;
 using CarAuction.Domain.Interfaces;
@@ -30,7 +31,7 @@ namespace CarAuction.Application.Services
                           AddSedanRequestDto sedanRequest => _mapper.Map<Sedan>(sedanRequest),
                           AddSuvRequestDto suvRequest => _mapper.Map<Suv>(suvRequest),
                           AddTruckRequestDto truckRequest => _mapper.Map<Truck>(truckRequest),
-                          _ => throw new ArgumentException("Invalid vehicle type")
+                          _ => throw new ValidationException("Invalid vehicle type")
                         };
 
       await _vehicleRepository.Add(vehicle);

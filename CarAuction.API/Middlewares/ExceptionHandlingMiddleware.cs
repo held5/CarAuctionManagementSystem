@@ -1,7 +1,6 @@
-﻿using System.Net;
-using System.Text.Json;
-
-using CarAuction.API.Models;
+﻿using CarAuction.API.Models;
+using CarAuction.Application.Exceptions;
+using System.Net;
 
 namespace CarAuction.API.Middlewares
 {
@@ -16,7 +15,6 @@ namespace CarAuction.API.Middlewares
       _logger = logger;
     }
 
-    // TODO: Better error handling.
     public async Task Invoke(HttpContext context)
     {
       try
@@ -25,19 +23,24 @@ namespace CarAuction.API.Middlewares
       }
       catch (Exception ex)
       {
-        _logger.LogError(ex, "An unexpected exception occurred: {Exception}", ex);
-
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-        var response = new ErrorResponse 
-                       {
-                         StatusCode = context.Response.StatusCode,
-                         Message = ex.Message
-                       };
-        
-        await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+        await HandleExceptionAsync(context, ex);
       }
+    }
+
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    {
+      _logger.LogError(exception, "An unexpected error occurred.");
+
+      ExceptionResponse response = exception switch
+                                   {
+                                     NotFoundException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
+                                     ValidationException _ => new ExceptionResponse(HttpStatusCode.NotFound, exception.Message),
+                                     _ => new ExceptionResponse(HttpStatusCode.InternalServerError, "An unexpected exception occurred")
+                                   };
+
+      context.Response.ContentType = "application/json";
+      context.Response.StatusCode = (int)response.StatusCode;
+      await context.Response.WriteAsJsonAsync(response);
     }
   }
 }

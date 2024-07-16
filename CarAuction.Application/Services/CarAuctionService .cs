@@ -1,4 +1,5 @@
 ﻿using CarAuction.Application.Dtos;
+using CarAuction.Application.Exceptions;
 using CarAuction.Domain.Entities;
 using CarAuction.Domain.Interfaces;
 
@@ -24,14 +25,14 @@ namespace CarAuction.Application.Services
 
       if (vehicle == null)
       {
-        throw new InvalidOperationException($"Vehicle with Id: '{vehicleId}' does not exist.");
+        throw new NotFoundException($"Vehicle with Id: '{vehicleId}' does not exist.");
       }
 
       var existingAuction = await _auctionRepository.GetAll(a => a.VehicleId.Equals(vehicleId) && a.IsActive);
 
       if (existingAuction.Any())
       {
-        throw new InvalidOperationException($"An active auction already exists for vehicle with Id: '{vehicleId}'.");
+        throw new ValidationException($"An active auction already exists for vehicle with Id: '{vehicleId}'.");
       }
 
       var newAuction = new Auction
@@ -53,12 +54,12 @@ namespace CarAuction.Application.Services
 
       if (auction == null)
       {
-        throw new InvalidOperationException($"Auction with id: {auctionId} not found.");
+        throw new NotFoundException($"Auction with id: {auctionId} not found.");
       }
 
       if (!auction.IsActive)
       {
-        throw new InvalidOperationException($"Auction with id: {auctionId} is not active and cannot be closed.");
+        throw new ValidationException($"Auction with id: {auctionId} is not active and cannot be closed.");
       }
 
       auction.IsActive = false;
@@ -74,17 +75,17 @@ namespace CarAuction.Application.Services
 
       if (auction == null)
       {
-        throw new InvalidOperationException($"Auction with Id: {bidRequest.AuctionId} not found.");
+        throw new NotFoundException($"Auction with Id: {bidRequest.AuctionId} not found.");
       }
 
       if (!auction.IsActive)
       {
-        throw new InvalidOperationException($"Auction with Id: {bidRequest.AuctionId} is already closed.");
+        throw new ValidationException($"Auction with Id: {bidRequest.AuctionId} is already closed.");
       }
 
       if (auction.CurrentHighestBid >= bidRequest.BidAmount)
       {
-        throw new InvalidOperationException("Bid amount must be higher than the current highest bid.");
+        throw new ValidationException("Bid amount must be higher than the current highest bid.");
       }
 
       auction.CurrentHighestBid = bidRequest.BidAmount;

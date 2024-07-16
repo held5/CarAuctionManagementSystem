@@ -1,11 +1,13 @@
 ﻿using AutoBogus;
 using Bogus;
 using CarAuction.Application.Dtos;
+using CarAuction.Application.Exceptions;
 using CarAuction.Application.Services;
 using CarAuction.Domain.Entities;
 using CarAuction.Domain.Interfaces;
 using NSubstitute;
 
+using ValidationException = CarAuction.Application.Exceptions.ValidationException;
 namespace CarAuction.UnitTests.Application
 {
   [TestFixture]
@@ -77,10 +79,10 @@ namespace CarAuction.UnitTests.Application
     ///   When
     ///     AddAuctionAsync method is called with the invalid vehicleId
     ///   Then
-    ///     it should throw an InvalidOperationException.
+    ///     it should throw an NotFoundException.
     /// </summary>
     [Test]
-    public async Task AddAuctionAsync_WhenVehicleIdIsInvalid_ShouldThrowInvalidOperationException()
+    public async Task AddAuctionAsync_WhenVehicleIdIsInvalid_ShouldThrowNotFoundException()
     {
       // Arrange
       var vehicleId = Guid.NewGuid();
@@ -88,7 +90,7 @@ namespace CarAuction.UnitTests.Application
       _vehicleRepositoryMock.Get(vehicleId).Returns(default(Vehicle));
 
       // Act + Assert
-      var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.AddAuctionAsync(vehicleId));
+      var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.AddAuctionAsync(vehicleId));
       Assert.That(ex.Message, Is.EqualTo($"Vehicle with Id: '{vehicleId}' does not exist."));
 
       await _auctionRepositoryMock.DidNotReceive().Add(Arg.Any<Auction>());
@@ -101,10 +103,10 @@ namespace CarAuction.UnitTests.Application
     ///   When
     ///     AddAuctionAsync method is called with the vehicleId
     ///   Then
-    ///     it should throw an InvalidOperationException indicating an active auction already exists.
+    ///     it should throw a ValidationException indicating an active auction already exists.
     /// </summary>
     [Test]
-    public async Task AddAuctionAsync_WhenExistingActiveAuction_ShouldThrowInvalidOperationException()
+    public async Task AddAuctionAsync_WhenExistingActiveAuction_ShouldThrowValidationException()
     {
       // Arrange
       var vehicleId = Guid.NewGuid();
@@ -115,7 +117,7 @@ namespace CarAuction.UnitTests.Application
       _auctionRepositoryMock.GetAll().ReturnsForAnyArgs(existingAuction.AsQueryable());
 
       // Act + Assert
-      var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.AddAuctionAsync(vehicleId));
+      var ex = Assert.ThrowsAsync<ValidationException>(async () => await _sut.AddAuctionAsync(vehicleId));
       Assert.That(ex.Message, Is.EqualTo($"An active auction already exists for vehicle with Id: '{vehicleId}'."));
 
       await _auctionRepositoryMock.DidNotReceive().Add(Arg.Any<Auction>());
@@ -154,17 +156,17 @@ namespace CarAuction.UnitTests.Application
     ///   When
     ///     CloseAuctionAsync method is called with the invalid auctionId
     ///   Then
-    ///     it should throw an InvalidOperationException.
+    ///     it should throw an NotFoundException.
     /// </summary>
     [Test]
-    public async Task CloseAuctionAsync_WhenAuctionIdIsInvalid_ShouldThrowInvalidOperationException()
+    public async Task CloseAuctionAsync_WhenAuctionIdIsInvalid_ShouldThrowNotFoundException()
     {
       // Arrange
       var auctionId = Guid.NewGuid();
       _auctionRepositoryMock.Get(auctionId).Returns(default(Auction));
 
       // Act + Assert
-      var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.CloseAuctionAsync(auctionId));
+      var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.CloseAuctionAsync(auctionId));
       Assert.That(ex.Message, Is.EqualTo($"Auction with id: {auctionId} not found."));
 
       await _auctionRepositoryMock.DidNotReceive().Update(Arg.Any<Auction>());
@@ -177,10 +179,10 @@ namespace CarAuction.UnitTests.Application
     ///   When
     ///     CloseAuctionAsync method is called with the auctionId
     ///   Then
-    ///     it should throw an InvalidOperationException indicating the auction is not active.
+    ///     it should throw a ValidationException  indicating the auction is not active.
     /// </summary>
     [Test]
-    public async Task CloseAuctionAsync_WhenAuctionIsNotActive_ShouldThrowInvalidOperationException()
+    public async Task CloseAuctionAsync_WhenAuctionIsNotActive_ShouldThrowValidationException()
     {
       // Arrange
       var auctionId = Guid.NewGuid();
@@ -188,7 +190,7 @@ namespace CarAuction.UnitTests.Application
       _auctionRepositoryMock.Get(auctionId).Returns(auction);
 
       // Act + Assert
-      var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.CloseAuctionAsync(auctionId));
+      var ex = Assert.ThrowsAsync<ValidationException>(async () => await _sut.CloseAuctionAsync(auctionId));
       Assert.That(ex.Message, Is.EqualTo($"Auction with id: {auctionId} is not active and cannot be closed."));
 
       await _auctionRepositoryMock.DidNotReceive().Update(Arg.Any<Auction>());
@@ -227,10 +229,10 @@ namespace CarAuction.UnitTests.Application
     ///   When
     ///     PlaceBidAsync method is called with the invalid auctionId
     ///   Then
-    ///     it should throw an InvalidOperationException.
+    ///     it should throw a NotFoundException.
     /// </summary>
     [Test]
-    public async Task PlaceBidAsync_WhenAuctionIdIsInvalid_ShouldThrowInvalidOperationException()
+    public async Task PlaceBidAsync_WhenAuctionIdIsInvalid_ShouldThrowNotFoundException()
     {
       // Arrange
       var auctionId = Guid.NewGuid();
@@ -238,7 +240,7 @@ namespace CarAuction.UnitTests.Application
       _auctionRepositoryMock.Get(auctionId).Returns(default(Auction));
 
       // Act + Assert
-      var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.PlaceBidAsync(bid));
+      var ex = Assert.ThrowsAsync<NotFoundException>(async () => await _sut.PlaceBidAsync(bid));
       Assert.That(ex.Message, Is.EqualTo($"Auction with Id: {auctionId} not found."));
 
       await _auctionRepositoryMock.DidNotReceive().Update(Arg.Any<Auction>());
@@ -252,10 +254,10 @@ namespace CarAuction.UnitTests.Application
     ///   When
     ///     PlaceBidAsync method is called with a bid for the inactive auction
     ///   Then
-    ///     it should throw an InvalidOperationException indicating the auction is already closed.
+    ///     it should throw a ValidationException nException indicating the auction is already closed.
     /// </summary>
     [Test]
-    public async Task PlaceBidAsync_InactiveAuction_ShouldThrowInvalidOperationException()
+    public async Task PlaceBidAsync_InactiveAuction_ShouldThrowValidationException()
     {
       // Arrange
       var bid = new PlaceBidRequestDto(Guid.NewGuid(), 1500);
@@ -264,7 +266,7 @@ namespace CarAuction.UnitTests.Application
       _auctionRepositoryMock.Get(bid.AuctionId).Returns(auction);
 
       // Act & Assert
-      var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.PlaceBidAsync(bid));
+      var ex = Assert.ThrowsAsync<ValidationException>(async () => await _sut.PlaceBidAsync(bid));
       Assert.That(ex.Message, Is.EqualTo($"Auction with Id: {bid.AuctionId} is already closed."));
 
       await _auctionRepositoryMock.DidNotReceive().Update(Arg.Any<Auction>());
@@ -277,10 +279,10 @@ namespace CarAuction.UnitTests.Application
     ///   When
     ///     PlaceBidAsync method is called with the bid
     ///   Then
-    ///     it should throw an InvalidOperationException indicating bid amount must be higher.
+    ///     it should throw a ValidationException indicating bid amount must be higher.
     /// </summary>
     [Test]
-    public async Task PlaceBidAsync_WhenBidAmountNotHigher_ShouldThrowInvalidOperationException()
+    public async Task PlaceBidAsync_WhenBidAmountNotHigher_ShouldThrowValidationException()
     {
       // Arrange
       var bid = new PlaceBidRequestDto(Guid.NewGuid(), 1000);
@@ -289,7 +291,7 @@ namespace CarAuction.UnitTests.Application
       _auctionRepositoryMock.Get(bid.AuctionId).Returns(auction);
 
       // Act + Assert
-      var ex = Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.PlaceBidAsync(bid));
+      var ex = Assert.ThrowsAsync<ValidationException>(async () => await _sut.PlaceBidAsync(bid));
       Assert.That(ex.Message, Is.EqualTo("Bid amount must be higher than the current highest bid."));
 
       await _auctionRepositoryMock.DidNotReceive().Update(Arg.Any<Auction>());
